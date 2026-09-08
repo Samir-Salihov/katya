@@ -1,0 +1,4 @@
+/* ═══ FOOTER ═══ */
+footer{text-align:center;padding:48px 24px 80px;background:var(--cream)}
+footer p{font-size:0.9rem;color:var(--deep);font-style:italic}
+footer .fh{margin-top:16px;font-size:1.1rem;letter-spacing:8px;color:var(--rose);animation:pulse 2.5s ease-in-out infinite}

@@ -1,0 +1,12 @@
+/* ═══ DESIGN TOKENS ═══ */
+:root {
+  --cream: #FFF8F0;
+  --blush: #F2D7D5;
+  --rose: #D4A5A5;
+  --deep: #9B6B6B;
+  --wine: #5C3A3A;
+  --ink: #2C1810;
+  --gold: #C9A96E;
+  --white: #FFFCF7;
+  --shadow: rgba(92,58,58,0.12);
+}

@@ -1,0 +1,10 @@
+/* ═══ RANDOM MEMORY ═══ */
+.memory{background:var(--cream);text-align:center;padding:80px 24px}
+.memory-card{max-width:400px;margin:0 auto;min-height:200px;padding:40px;border-radius:12px;background:var(--white);box-shadow:0 8px 32px var(--shadow);transition:transform 0.4s ease}
+.memory-card.flip{animation:cardFlip 0.6s ease}
+@keyframes cardFlip{0%{transform:scale(1) rotateY(0)}50%{transform:scale(0.9) rotateY(90deg)}100%{transform:scale(1) rotateY(0)}}
+.memory-emoji{font-size:2.5rem;margin-bottom:16px}
+.memory-text{font-size:1rem;color:var(--ink);font-style:italic;line-height:1.8;min-height:60px}
+.memory-btn{margin-top:24px;padding:12px 32px;background:linear-gradient(135deg,var(--rose),var(--deep));color:var(--white);border:none;border-radius:40px;font-family:Georgia,serif;font-size:0.9rem;font-style:italic;cursor:pointer;transition:transform 0.2s ease,box-shadow 0.3s ease}
+.memory-btn:hover{transform:scale(1.05);box-shadow:0 8px 24px rgba(155,107,107,0.3)}
+.memory-btn:active{transform:scale(0.97)}

@@ -1,0 +1,36 @@
+/* ═══ INSTALL HINT (подсказка «на экран Домой») ═══ */
+.install-hint{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:950;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:16px;
+  background:rgba(44,24,16,0.92);backdrop-filter:blur(16px);
+  border:1px solid rgba(212,165,165,0.18);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+  max-width:460px;margin:0 auto;
+  opacity:0;transform:translateY(24px);pointer-events:none;
+  transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+.install-hint.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.install-icon{flex-shrink:0;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;color:var(--rose);
+  background:linear-gradient(145deg,#3D2222,#5C3A3A);
+  border:1px solid rgba(212,165,165,0.2)}
+.install-body{flex:1;min-width:0}
+.install-title{font-size:0.86rem;color:var(--white);font-style:italic}
+.install-text{font-size:0.68rem;color:var(--blush);opacity:0.8;margin-top:2px;line-height:1.4}
+
+.install-btn{flex-shrink:0;padding:9px 16px;border:none;border-radius:20px;cursor:pointer;
+  font-family:Georgia,serif;font-size:0.8rem;font-style:italic;color:var(--white);
+  background:linear-gradient(135deg,var(--rose),var(--deep));
+  transition:transform 0.2s ease,box-shadow 0.3s ease}
+.install-btn:hover{transform:scale(1.04);box-shadow:0 6px 18px rgba(155,107,107,0.35)}
+.install-btn:active{transform:scale(0.97)}
+
+.install-close{flex-shrink:0;width:26px;height:26px;background:none;border:none;cursor:pointer;
+  color:var(--blush);font-family:Georgia,serif;font-size:1.4rem;line-height:1;opacity:0.55;
+  transition:opacity 0.3s ease}
+.install-close:hover{opacity:1}
+
+@media(max-width:400px){
+  .install-text{display:none}
+  .install-title{font-size:0.8rem}
+}

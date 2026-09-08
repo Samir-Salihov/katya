@@ -1,0 +1,13 @@
+/* ═══ TIMELINE ═══ */
+.tl-section{background:var(--white)}
+.tl{max-width:720px;margin:0 auto;position:relative;padding-left:48px}
+.tl::before{content:'';position:absolute;left:12px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--blush),var(--rose),var(--gold),var(--rose),var(--blush))}
+.tli{position:relative;margin-bottom:64px;opacity:0;transform:translateX(-20px);transition:all 0.7s cubic-bezier(0.25,0.46,0.45,0.94)}
+.tli.vis{opacity:1;transform:translateX(0)}
+.tli::before{content:'';position:absolute;left:-42px;top:8px;width:14px;height:14px;border-radius:50%;border:2px solid var(--rose);background:var(--white);transition:all 0.3s ease}
+.tli:hover::before{background:var(--rose);border-color:var(--gold);box-shadow:0 0 12px rgba(212,165,165,0.4)}
+.tli-img{width:100%;height:240px;border-radius:6px;overflow:hidden;margin-bottom:16px}
+.tli-img .ph{width:100%;height:100%}
+.tl-date{font-size:0.65rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.tl-ttl{font-size:1.15rem;font-style:italic;color:var(--wine);margin-bottom:6px}
+.tl-txt{font-size:0.88rem;color:var(--deep);line-height:1.8}

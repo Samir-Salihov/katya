@@ -1,0 +1,11 @@
+/* ═══ HEARTS GAME ═══ */
+.hearts{background:var(--cream);text-align:center;padding:80px 24px;position:relative;min-height:380px;overflow:hidden}
+.hcanvas{position:absolute;inset:0;pointer-events:none}
+.tap-h{position:absolute;animation:hfloat 1.4s ease forwards;pointer-events:none}
+@keyframes hfloat{0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}100%{opacity:0;transform:translateY(-130px) scale(1.5) rotate(20deg)}}
+.hcontent{position:relative;z-index:2}
+.hnum{font-size:clamp(3rem,8vw,5rem);font-style:italic;color:var(--wine);font-weight:300;transition:transform 0.15s ease}
+.hlbl{font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;color:var(--rose);margin-top:8px}
+.hbtn{margin-top:28px;padding:14px 36px;background:linear-gradient(135deg,var(--rose),var(--deep));color:var(--white);border:none;border-radius:40px;font-family:Georgia,serif;font-size:0.95rem;font-style:italic;cursor:pointer;position:relative;z-index:2;transition:transform 0.2s ease,box-shadow 0.3s ease}
+.hbtn:hover{transform:scale(1.05);box-shadow:0 8px 24px rgba(155,107,107,0.3)}
+.hbtn:active{transform:scale(0.97)}

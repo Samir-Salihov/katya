@@ -1,0 +1,3 @@
+# Netlify: service worker всегда свежий, иначе обновления не дойдут до приложения
+/sw.js
+  Cache-Control: no-cache

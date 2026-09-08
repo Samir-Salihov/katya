@@ -1,0 +1,13 @@
+/* ═══ STARRY SKY ═══ */
+.stars-section{position:relative;height:70vh;background:#0B0D17;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.stars-canvas{position:absolute;inset:0}
+.star{position:absolute;border-radius:50%;background:#fff}
+.star.sm{width:1px;height:1px;opacity:0.4}
+.star.md{width:2px;height:2px;opacity:0.6}
+.star.lg{width:3px;height:3px;opacity:0.8;box-shadow:0 0 4px rgba(255,255,255,0.4)}
+.star.twinkle{animation:twinkle var(--dur) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:var(--base)}50%{opacity:1}}
+.shooting-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:0;box-shadow:0 0 6px 2px rgba(255,255,255,0.3)}
+.shooting-star.fly{animation:shoot 1.2s ease-in forwards}
+@keyframes shoot{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(200px,120px) scale(0.2)}}
+.stars-text{position:relative;z-index:2;text-align:center;color:rgba(255,255,255,0.6);font-style:italic;font-size:clamp(1rem,2.8vw,1.4rem);max-width:400px;padding:0 24px;text-shadow:0 0 20px rgba(0,0,0,0.5)}

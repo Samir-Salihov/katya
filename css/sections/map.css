@@ -1,0 +1,10 @@
+/* ═══ MAP ═══ */
+.map-section{background:var(--cream);text-align:center}
+.map-wrap{max-width:700px;margin:0 auto;position:relative}
+.map-svg{width:100%;height:auto}
+.map-info{display:flex;justify-content:center;gap:40px;margin-top:32px;flex-wrap:wrap}
+.map-city{text-align:center}
+.map-city-name{font-size:1rem;font-style:italic;color:var(--wine);margin-bottom:4px}
+.map-city-addr{font-size:0.72rem;color:var(--deep);letter-spacing:1px}
+.map-dist{margin-top:28px;font-size:clamp(1.8rem,5vw,3rem);font-weight:300;color:var(--wine);font-style:italic}
+.map-dist span{font-size:0.8rem;letter-spacing:3px;color:var(--rose);display:block;margin-top:4px;font-weight:400}

@@ -1,0 +1,7 @@
+/* ═══ LETTER ═══ */
+.letter-sec{background:var(--cream);display:flex;justify-content:center;padding:100px 24px}
+.letter{max-width:540px;padding:52px 40px;background:var(--white);border:1px solid var(--blush);position:relative;box-shadow:0 8px 40px var(--shadow)}
+.letter::before{content:'\201C';position:absolute;top:12px;left:16px;font-size:5rem;color:var(--blush);line-height:1;opacity:0.4}
+.letter p{font-size:1rem;line-height:2;color:var(--ink);margin-bottom:16px;font-style:italic;opacity:0;transform:translateY(14px);transition:all 0.6s ease}
+.letter p.vis{opacity:1;transform:translateY(0)}
+.letter .sig{text-align:right;font-size:1.1rem;color:var(--wine);margin-top:28px;font-style:italic}

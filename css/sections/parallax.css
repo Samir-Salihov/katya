@@ -1,0 +1,4 @@
+/* ═══ PARALLAX ═══ */
+.prlx{height:55vh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--wine),#3D2222)}
+.prlx .overlay{position:absolute;inset:0;background:rgba(44,24,16,0.5)}
+.prlx .qt{position:relative;z-index:2;color:var(--white);text-align:center;font-size:clamp(1.2rem,3.2vw,2rem);font-style:italic;max-width:480px;padding:0 24px;text-shadow:0 2px 16px rgba(0,0,0,0.35)}

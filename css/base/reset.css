@@ -1,0 +1,4 @@
+/* ═══ RESET / BASE ═══ */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:Georgia,'Times New Roman',serif;background:var(--cream);color:var(--ink);line-height:1.7;overflow-x:hidden}

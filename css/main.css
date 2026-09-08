@@ -1,0 +1,43 @@
+/* ============================================================
+   Для тебя — main stylesheet
+   Импортирует все части в порядке исходного каскада.
+   ============================================================ */
+
+/* --- base --- */
+@import url('base/variables.css');
+@import url('base/reset.css');
+
+/* --- sections & components (порядок каскада как в оригинале) --- */
+@import url('sections/hero.css');
+@import url('base/typography.css');        /* .label / .title / section */
+@import url('sections/strip.css');
+@import url('sections/parallax.css');
+@import url('sections/gallery.css');
+@import url('components/lightbox.css');
+@import url('components/player.css');
+@import url('sections/map.css');
+@import url('sections/timeline.css');
+@import url('sections/letter.css');
+@import url('sections/quotes.css');
+@import url('sections/secret.css');
+@import url('sections/memory.css');
+@import url('sections/story.css');
+@import url('sections/reasons.css');
+@import url('sections/hearts.css');
+@import url('sections/call.css');
+@import url('sections/counter.css');
+@import url('sections/footer.css');
+@import url('components/cursor-hearts.css');
+@import url('components/envelope.css');
+@import url('components/splash.css');
+@import url('components/install-hint.css');
+@import url('components/side-nav.css');
+@import url('sections/stars.css');
+@import url('sections/samir-letter.css');
+
+/* --- shared animations + responsive (в самом конце, как в оригинале) --- */
+@import url('base/animations.css');
+@import url('base/responsive.css');
+
+/* --- нативный лоск: safe-area и т.п. — самым последним, чтобы переопределять --- */
+@import url('base/app.css');
