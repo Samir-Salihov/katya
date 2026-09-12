@@ -1,0 +1,11 @@
+# Секреты — никогда в репозиторий
+.env
+.env.*
+!.env.example
+
+# Netlify
+.netlify/
+node_modules/
+
+# macOS
+.DS_Store

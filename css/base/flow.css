@@ -1,0 +1,66 @@
+/* ═══ ПУТЬ СОЛНЦА — сквозная драматургия страницы ═══
+   Секции идут от рассвета к ночи. Стыки подобраны так, чтобы низ одной
+   секции совпадал по цвету с верхом следующей — переходы не видны, страница
+   читается как одно непрерывное небо.
+   Файл импортируется ПОСЛЕ секций и переопределяет их фоны намеренно. */
+
+/* ── Рассвет: из ночи к первому свету ── */
+.hero{background:linear-gradient(180deg,#2E1526 0%,#5C2A47 22%,#9B3F5A 45%,#E86A5C 68%,#FFB07C 86%,#FFD3C2 100%)}
+
+/* ── Утро → полдень: самое светлое место страницы ── */
+.strip{background:linear-gradient(180deg,#FFD3C2 0%,#FFF3E9 100%)}
+.gallery{background:linear-gradient(180deg,#FFF3E9 0%,#FFFAF5 55%,#FFFAF5 100%)}
+
+/* ── Золотой час: свет теплеет ── */
+.map-section{background:linear-gradient(180deg,#FFFAF5 0%,#FFF0E0 60%,#FFE8D6 100%)}
+.tl-section{background:linear-gradient(180deg,#FFE8D6 0%,#FFD9C4 100%)}
+
+/* ── Закат ── */
+.samir-letter{background:linear-gradient(180deg,#FFD9C4 0%,#FFC9B4 100%)}
+.quotes{background:linear-gradient(180deg,#FFC9B4 0%,#F5A896 100%)}
+
+/* ── Сумерки: свет уходит ── */
+.memory{background:linear-gradient(180deg,#F5A896 0%,#C4707E 100%)}
+
+/* ── Ночь ── */
+.hearts{background:linear-gradient(180deg,#C4707E 0%,#6B3352 55%,#3A1F42 100%)}
+.call-sec{background:linear-gradient(180deg,#3A1F42 0%,#2A1739 100%)}
+.counter{background:linear-gradient(180deg,#2A1739 0%,#1E1234 55%,#180F2E 100%)}
+footer{background:#180F2E}
+
+/* ═══ ТЕКСТ НА ТЁМНОМ ═══
+   Начиная с сумерек фон уходит в тень — заголовки и подписи должны
+   перевернуться в светлые, иначе секции станут нечитаемыми. */
+.hearts .title,.call-sec .title,.counter .c-top,.counter .c-lbl{color:var(--blush)}
+.hearts .hnum{color:var(--white)}
+.hearts .hlbl,.call-sec .label,.hearts .label{color:var(--gold)}
+footer p{color:var(--blush);opacity:0.75}
+footer .fh{color:var(--rose)}
+
+/* Цитаты и воспоминания стоят на середине перехода — им хватает
+   насыщенного сливового, но подписи усиливаем, чтобы не тонули. */
+.quotes .quote-author{color:var(--wine)}
+.quotes .quote-item::before{color:var(--white);opacity:0.7}
+.memory .title{color:var(--ink)}
+.memory .label,.quotes .label{color:var(--wine)}
+
+/* ═══ СВЕЧЕНИЕ АКЦЕНТОВ ═══
+   На тёмном малина и янтарь должны светиться, а не лежать плоско. */
+.hearts .hbtn,.memory .memory-btn{
+  background:linear-gradient(135deg,var(--rose),var(--coral));
+  box-shadow:0 6px 24px var(--glow)}
+.hearts .hbtn:hover,.memory .memory-btn:hover{box-shadow:0 10px 34px var(--glow)}
+
+/* ═══ КАРТОЧКА ЗВОНКА В НОЧИ ═══
+   Белый прямоугольник разрезал ночную секцию пополам — переводим её
+   на «стекло»: тёмная подложка, светлый текст, тёплая окантовка. */
+.call-sec .call-card{
+  background:linear-gradient(160deg,rgba(255,240,225,0.10),rgba(255,180,140,0.05));
+  border:1px solid rgba(255,196,150,0.22);
+  box-shadow:0 18px 50px rgba(10,6,20,0.45),inset 0 1px 0 rgba(255,235,215,0.12);
+  backdrop-filter:blur(10px)}
+.call-sec .call-heading{color:var(--blush)}
+.call-sec .call-text{color:rgba(255,235,220,0.78)}
+.call-sec .call-note{color:var(--gold);opacity:0.6}
+.call-sec .call-btn{box-shadow:0 8px 28px var(--glow)}
+.call-sec .call-ring{box-shadow:0 0 44px rgba(255,107,107,0.45)}

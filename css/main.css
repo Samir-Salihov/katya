@@ -1,10 +1,11 @@
 /* ============================================================
-   Для тебя — main stylesheet
+   Katera — main stylesheet
    Импортирует все части в порядке исходного каскада.
    ============================================================ */
 
 /* --- base --- */
 @import url('base/variables.css');
+@import url('base/fonts.css');
 @import url('base/reset.css');
 
 /* --- sections & components (порядок каскада как в оригинале) --- */
@@ -29,11 +30,15 @@
 @import url('sections/footer.css');
 @import url('components/cursor-hearts.css');
 @import url('components/envelope.css');
+@import url('components/stream.css');
 @import url('components/splash.css');
 @import url('components/install-hint.css');
 @import url('components/side-nav.css');
 @import url('sections/stars.css');
 @import url('sections/samir-letter.css');
+
+/* --- сквозная драматургия: переопределяет фоны секций, поэтому идёт после них --- */
+@import url('base/flow.css');
 
 /* --- shared animations + responsive (в самом конце, как в оригинале) --- */
 @import url('base/animations.css');

@@ -1,6 +1,6 @@
 /* ═══ STARRY SKY ═══ */
 .stars-section{position:relative;height:70vh;background:#0B0D17;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.stars-canvas{position:absolute;inset:0}
+.stars-canvas{position:absolute;inset:0;z-index:0;pointer-events:none}
 .star{position:absolute;border-radius:50%;background:#fff}
 .star.sm{width:1px;height:1px;opacity:0.4}
 .star.md{width:2px;height:2px;opacity:0.6}

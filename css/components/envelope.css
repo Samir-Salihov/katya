@@ -1,12 +1,19 @@
 /* ═══ ENVELOPE INTRO + PASSWORD ═══ */
-.envelope-overlay{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(170deg,#2A1515 0%,#4A2828 40%,#5C3A3A 100%);transition:opacity 0.8s ease}
+.envelope-overlay{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(170deg,#2E1526 0%,#5C2A47 45%,#7A3B5C 100%);
+  transition:opacity 0.8s ease,background 1.2s ease}
+/* коридор включился — фон гасим, чтобы карточки летели из темноты */
+.envelope-overlay.in-stream{background:#180F2E}
 .envelope-overlay.gone{opacity:0;pointer-events:none}
 .envelope-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(201,169,110,0.06) 0%,transparent 70%);pointer-events:none}
 
 /* сцена конверта — контекст для подсказки */
-.env-stage{position:relative;display:flex;flex-direction:column;align-items:center}
+.env-stage{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;
+  perspective:900px;transition:transform 1.05s cubic-bezier(0.5,0,0.75,0),opacity 0.75s ease 0.3s}
+/* «влетаем» в письмо: конверт разгоняется на зрителя и растворяется */
+.env-stage.dive{transform:scale(3.4) translateY(6%);opacity:0}
 
-.envelope{--open:0;position:relative;width:300px;height:220px;perspective:900px;margin-bottom:36px;filter:drop-shadow(0 24px 48px rgba(0,0,0,0.5));cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+.envelope{--open:0;--crack:0;position:relative;width:300px;height:220px;perspective:900px;margin-bottom:36px;filter:drop-shadow(0 24px 48px rgba(0,0,0,0.5));cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
 .envelope.dragging{cursor:grabbing}
 
 /* прозрачная «ручка» поверх конверта — цель для перетягивания */
@@ -35,23 +42,61 @@
 .env-address div:nth-child(3){width:100px}
 
 /* flap */
-.env-flap{position:absolute;top:0;left:0;width:300px;height:150px;transform-origin:top center;transform:rotateX(calc(var(--open) * 180deg));transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);z-index:5}
-.env-flap-inner{width:100%;height:100%;background:linear-gradient(180deg,#E4CEB2 0%,#D8C2A6 40%,#CCB69A 100%);clip-path:polygon(0 0,50% 100%,100% 0);border-radius:6px 6px 0 0;position:relative}
+.env-flap{position:absolute;top:0;left:0;width:300px;height:150px;transform-style:preserve-3d;transform-origin:top center;transform:rotateX(calc(var(--open) * 172deg));transition:transform 0.65s cubic-bezier(0.34,1.28,0.64,1);z-index:5}
+/* отогнулся за плоскость конверта — уходит под письмо */
+.envelope.flap-open .env-flap{z-index:0}
+.env-flap-inner{position:absolute;inset:0;backface-visibility:hidden;background:linear-gradient(180deg,#E4CEB2 0%,#D8C2A6 40%,#CCB69A 100%);clip-path:polygon(0 0,50% 100%,100% 0);border-radius:6px 6px 0 0}
 .env-flap-inner::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.08) 0%,transparent 60%);clip-path:polygon(0 0,50% 100%,100% 0)}
+/* изнанка клапана: развёрнута на 180°, поэтому и треугольник, и скругления зеркальные */
+.env-flap-back{position:absolute;inset:0;transform:rotateX(180deg);backface-visibility:hidden;background:linear-gradient(180deg,#C7B295 0%,#D6C2A6 45%,#E2CFB4 100%);clip-path:polygon(0 100%,50% 0,100% 100%);border-radius:0 0 6px 6px}
+.env-flap-back::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(92,58,58,0.14) 0%,transparent 55%);clip-path:polygon(0 100%,50% 0,100% 100%)}
 .envelope.dragging .env-flap{transition:none}
 
 /* letter inside */
-.env-letter{position:absolute;bottom:24px;left:24px;right:24px;height:145px;background:linear-gradient(135deg,var(--white),#FFF5E8);border-radius:4px;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;transform:translateY(calc(var(--open) * -130px));transition:transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 2px 16px rgba(0,0,0,0.06);border:1px solid rgba(139,109,71,0.08)}
-.envelope.dragging .env-letter{transition:none}
-.env-letter::before{content:'';position:absolute;inset:6px;border:1px solid rgba(139,109,71,0.06);border-radius:2px;pointer-events:none}
-.env-letter-text{font-size:1.15rem;font-style:italic;color:var(--wine);text-align:center;position:relative}
-.env-letter-sub{font-size:0.68rem;color:var(--deep);letter-spacing:4px;text-transform:uppercase}
+.env-letter{position:absolute;bottom:24px;left:24px;right:24px;height:145px;z-index:1;display:flex;align-items:center;justify-content:center;transform:translateY(calc(var(--open) * -130px)) rotate(calc(var(--open) * -1.1deg));transition:transform 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.1s;filter:drop-shadow(0 7px 14px rgba(0,0,0,0.3))}
+
+/* сам лист: три панели, боковые отогнуты назад, пока конверт закрыт */
+.env-sheet{width:100%;perspective:700px}
+.env-sheet-panel{background:linear-gradient(135deg,var(--white),#FFF5E8);position:relative}
+.env-sheet-top{height:41px;border-radius:4px 4px 0 0;transform-origin:bottom center;transform:rotateX(calc((1 - var(--open)) * 92deg));transition:transform 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.2s}
+.env-sheet-bot{height:41px;border-radius:0 0 4px 4px;transform-origin:top center;transform:rotateX(calc((1 - var(--open)) * -92deg));transition:transform 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.26s}
+.env-sheet-mid{height:63px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 18px;z-index:2}
+
+/* тень на отогнутых панелях — уходит по мере разглаживания */
+.env-sheet-top::after,.env-sheet-bot::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:calc(1 - var(--open));transition:opacity 0.6s ease 0.2s}
+.env-sheet-top::after{background:linear-gradient(to top,rgba(74,55,40,0.3),rgba(74,55,40,0.02))}
+.env-sheet-bot::after{background:linear-gradient(to bottom,rgba(74,55,40,0.3),rgba(74,55,40,0.02))}
+
+/* линии сгиба: бледнеют, но до конца не исчезают — бумага помнит складку */
+.env-sheet-mid::before,.env-sheet-mid::after{content:'';position:absolute;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(139,109,71,0.42),transparent);opacity:calc(1 - var(--open) * 0.62);transition:opacity 0.6s ease 0.2s;pointer-events:none}
+.env-sheet-mid::before{top:0}
+.env-sheet-mid::after{bottom:0}
+
+.env-letter-text{font-size:1.15rem;font-style:italic;color:var(--wine);text-align:center;position:relative;opacity:calc((var(--open) - 0.3) * 2.4);transition:opacity 0.5s ease 0.3s}
+.env-letter-sub{font-size:0.68rem;color:var(--deep);letter-spacing:4px;text-transform:uppercase;opacity:calc((var(--open) - 0.42) * 2.6);transition:opacity 0.5s ease 0.36s}
+
+.envelope.dragging .env-letter,.envelope.dragging .env-sheet-panel,
+.envelope.dragging .env-sheet-panel::after,.envelope.dragging .env-sheet-mid::before,
+.envelope.dragging .env-letter-text,.envelope.dragging .env-letter-sub{transition:none}
 
 /* wax seal */
-.env-seal{position:absolute;bottom:78px;left:50%;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#D44A3A,#B03020 50%,#8B1A10 100%);display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 4px 12px rgba(0,0,0,0.35),inset 0 2px 4px rgba(255,255,255,0.15),inset 0 -2px 4px rgba(0,0,0,0.2);border:1px solid rgba(139,40,30,0.3);opacity:calc(1 - var(--open));transform:translateX(-50%) scale(calc(1 - var(--open) * 0.7)) rotate(calc(var(--open) * 22deg));transition:opacity 0.5s ease,transform 0.5s ease}
-.env-seal::before{content:'';position:absolute;inset:4px;border-radius:50%;border:1.5px solid rgba(255,200,180,0.2)}
-.envelope.dragging .env-seal{transition:none}
-.env-seal span{color:rgba(245,230,211,0.9);font-size:1.2rem;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+.env-seal{position:absolute;bottom:78px;left:50%;width:48px;height:48px;z-index:6;transform:translateX(-50%);pointer-events:none}
+
+/* половинки — одинаковые круги, обрезанные по общей ломаной линии скола */
+.env-seal-half{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 35%,#D44A3A,#B03020 50%,#8B1A10 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.35),inset 0 2px 4px rgba(255,255,255,0.15),inset 0 -2px 4px rgba(0,0,0,0.2);border:1px solid rgba(139,40,30,0.3);opacity:calc(1 - var(--crack));transition:transform 0.45s cubic-bezier(0.3,0.7,0.4,1),opacity 0.45s ease}
+.env-seal-half::before{content:'';position:absolute;inset:4px;border-radius:50%;border:1.5px solid rgba(255,200,180,0.2)}
+.env-seal-l{clip-path:polygon(0 0,52% 0,45% 14%,56% 28%,46% 44%,57% 60%,47% 76%,54% 90%,49% 100%,0 100%);transform:translate(calc(var(--crack) * -25px),calc(var(--crack) * 15px)) rotate(calc(var(--crack) * -32deg))}
+.env-seal-r{clip-path:polygon(52% 0,100% 0,100% 100%,49% 100%,54% 90%,47% 76%,57% 60%,46% 44%,56% 28%,45% 14%);transform:translate(calc(var(--crack) * 25px),calc(var(--crack) * 19px)) rotate(calc(var(--crack) * 38deg))}
+.env-seal-half span{color:rgba(245,230,211,0.9);font-size:1.2rem;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+
+/* мелкие осколки сургуча: вспыхивают в момент скола и гаснут */
+.env-shard{position:absolute;top:46%;left:48%;width:5px;height:4px;border-radius:2px 1px 2px 1px;background:linear-gradient(140deg,#C0392B,#7E170E);opacity:calc(var(--crack) * (1 - var(--crack)) * 3.6);transition:transform 0.45s ease-out,opacity 0.45s ease}
+.env-shard-1{transform:translate(calc(var(--crack) * -20px),calc(var(--crack) * 22px)) rotate(calc(var(--crack) * 150deg))}
+.env-shard-2{transform:translate(calc(var(--crack) * 16px),calc(var(--crack) * 27px)) rotate(calc(var(--crack) * -120deg)) scale(0.8)}
+.env-shard-3{transform:translate(calc(var(--crack) * -9px),calc(var(--crack) * 32px)) rotate(calc(var(--crack) * 90deg)) scale(0.65)}
+.env-shard-4{transform:translate(calc(var(--crack) * 23px),calc(var(--crack) * 14px)) rotate(calc(var(--crack) * -60deg)) scale(0.55)}
+
+.envelope.dragging .env-seal-half,.envelope.dragging .env-shard{transition:none}
 
 /* подсказка «потяни вверх» */
 .env-hint{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px;opacity:0;transform:translateY(-6px);transition:opacity 0.6s ease,transform 0.6s ease;pointer-events:none}
@@ -62,10 +107,19 @@
 @keyframes hintBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
 /* password */
-.pwd-area{display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;z-index:2;margin-top:8px;opacity:0;transform:translateY(18px);pointer-events:none;transition:opacity 0.6s ease,transform 0.6s ease}
-.pwd-area.show{opacity:1;transform:translateY(0);pointer-events:auto}
-.pwd-label{font-size:0.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--blush);opacity:0.7}
-.pwd-hint{font-size:0.65rem;color:var(--rose);font-style:italic;opacity:0.5;margin-top:-8px}
+.pwd-area{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:4;
+  padding:34px 30px 30px;border-radius:22px;
+  background:linear-gradient(160deg,rgba(255,240,225,0.10),rgba(255,180,140,0.05));
+  border:1px solid rgba(255,196,150,0.20);
+  box-shadow:0 24px 70px rgba(10,6,20,0.55),inset 0 1px 0 rgba(255,235,215,0.14);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;transform:translateY(22px) scale(0.97);pointer-events:none;
+  transition:opacity 0.8s ease,transform 0.8s cubic-bezier(0.22,0.61,0.36,1)}
+.pwd-area.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.pwd-mark{font-family:var(--font-display);font-size:1.5rem;font-style:italic;color:var(--blush);
+  letter-spacing:0.01em;text-shadow:0 2px 20px rgba(255,107,107,0.35);margin-bottom:2px}
+.pwd-label{font-size:0.66rem;letter-spacing:4px;text-transform:uppercase;color:var(--blush);opacity:0.85}
+.pwd-hint{font-size:0.68rem;color:var(--gold);font-style:italic;opacity:0.8;margin-top:-6px}
 .pwd-inputs{display:flex;gap:10px}
 .pwd-digit{width:42px;height:54px;background:rgba(255,252,247,0.06);border:1.5px solid rgba(212,165,165,0.25);border-radius:10px;color:var(--white);font-family:Georgia,serif;font-size:1.4rem;text-align:center;outline:none;transition:all 0.3s ease;caret-color:var(--gold);backdrop-filter:blur(4px)}
 .pwd-digit:focus{border-color:var(--gold);background:rgba(255,252,247,0.1);box-shadow:0 0 16px rgba(201,169,110,0.15)}

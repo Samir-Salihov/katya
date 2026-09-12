@@ -24,6 +24,15 @@
   .envelope{width:220px;height:160px}
   .env-body{width:220px;height:140px}
   .env-flap{width:220px;height:110px}
+  /* письмо и печать заданы в пикселях — пересчитываем под уменьшенный конверт */
+  .env-letter{bottom:16px;left:16px;right:16px;height:104px;
+    transform:translateY(calc(var(--open) * -96px)) rotate(calc(var(--open) * -1.1deg))}
+  .env-sheet-top,.env-sheet-bot{height:30px}
+  .env-sheet-mid{height:44px;padding:0 12px;gap:5px}
+  .env-letter-text{font-size:1rem}
+  .env-letter-sub{font-size:0.6rem;letter-spacing:3px}
+  .env-seal{bottom:55px;width:38px;height:38px}
+  .env-seal-half span{font-size:0.95rem}
 }
 @media print{
   .ch,.arrow-down,.strip-hint,.hearts,.hcanvas{display:none}

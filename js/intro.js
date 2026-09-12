@@ -37,6 +37,8 @@ const UNLOCK_KEY = 'katya-unlocked';
   const envelope = document.getElementById('envelope');
   const envHint = document.getElementById('envHint');
   const pwdArea = document.getElementById('pwdArea');
+  const stage = document.querySelector('.env-stage');
+  const streamHost = document.getElementById('streamHost');
   const digits = document.querySelectorAll('.pwd-digit');
   const pwdError = document.getElementById('pwdError');
   const pwdInputs = document.getElementById('pwdInputs');
@@ -54,8 +56,23 @@ const UNLOCK_KEY = 'katya-unlocked';
   let startY = 0;
   let moved = 0;
 
+  let crack = 0;   // насколько раскололась печать: 0 → 1, обратно не отыгрывает
+
   function setOpen(v) {
-    if (envelope) envelope.style.setProperty('--open', v);
+    if (!envelope) return;
+    envelope.style.setProperty('--open', v);
+
+    // Сургуч ломается в первые мгновения вытягивания и уже не срастается,
+    // даже если конверт отпустить — поэтому только максимум, без возврата.
+    const c = Math.min(1, v * 6);
+    if (c > crack) {
+      if (crack === 0) window.buzz && window.buzz(14);   // щелчок скола
+      crack = c;
+      envelope.style.setProperty('--crack', crack);
+    }
+
+    // За 90° клапан уходит за плоскость конверта — там ему место под письмом
+    envelope.classList.toggle('flap-open', v > 0.5);
   }
 
   function onDown(e) {
@@ -103,19 +120,39 @@ const UNLOCK_KEY = 'katya-unlocked';
     }
   }
 
+  // ── Открытие: конверт раскрывается, письмо уносит нас внутрь ──
+  // Сцена в три такта, чтобы переход читался как один жест, а не как
+  // три отдельные анимации: раскрытие → налёт камеры → коридор с паролем.
   function openEnvelope() {
     if (opened) return;
     opened = true;
     setOpen(1);
     window.buzz && window.buzz(30);
     if (envHint) envHint.classList.remove('show');
-    // после раскрытия — показываем поле пароля
+
+    // Такт 1 — даём клапану договорить и письму выехать.
     setTimeout(() => {
-      if (pwdArea) {
-        pwdArea.classList.add('show');
-        if (digits.length) digits[0].focus();
+      // Такт 2 — «влетаем» в письмо: конверт разгоняется на зрителя и тает.
+      if (stage) stage.classList.add('dive');
+      window.buzz && window.buzz(18);
+
+      // Коридор строим заранее, но показываем в момент, когда конверт уже
+      // перекрыл кадр — переход получается без стыка.
+      if (streamHost && window.katyaStream) {
+        window.katyaStream.build(streamHost);
+        setTimeout(() => streamHost.classList.add('on'), 260);
       }
-    }, 850);
+      if (overlay) overlay.classList.add('in-stream');
+
+      // Такт 3 — пароль поверх летящих воспоминаний.
+      setTimeout(() => {
+        if (stage) stage.style.display = 'none';
+        if (pwdArea) {
+          pwdArea.classList.add('show');
+          if (digits.length) digits[0].focus();
+        }
+      }, 900);
+    }, 900);
   }
 
   // ── Пароль ──

@@ -1,7 +1,7 @@
-/* ═══ SERVICE WORKER — офлайн-оболочка «Для тебя» ═══
+/* ═══ SERVICE WORKER — офлайн-оболочка «Katera» ═══
    При изменении файлов подними версию кэша (katya-v1 → katya-v2),
    чтобы старый кэш очистился при активации. */
-const CACHE = 'katya-v3';
+const CACHE = 'katya-v23';
 
 /* Оболочка приложения — должна закэшироваться целиком при установке */
 const CORE = [
@@ -17,7 +17,18 @@ const CORE = [
   './css/base/animations.css',
   './css/base/responsive.css',
   './css/base/app.css',
+  './css/base/flow.css',
+  './css/base/fonts.css',
+  './fonts/inter-400-cyr.woff2',
+  './fonts/inter-400-lat.woff2',
+  './fonts/inter-500-cyr.woff2',
+  './fonts/inter-500-lat.woff2',
+  './fonts/playfair-500-cyr.woff2',
+  './fonts/playfair-500-lat.woff2',
+  './fonts/playfair-500i-cyr.woff2',
+  './fonts/playfair-500i-lat.woff2',
   './css/components/envelope.css',
+  './css/components/stream.css',
   './css/components/splash.css',
   './css/components/install-hint.css',
   './css/components/side-nav.css',
@@ -44,6 +55,7 @@ const CORE = [
   './css/sections/footer.css',
 
   './js/haptics.js',
+  './js/stream.js',
   './js/intro.js',
   './js/install-hint.js',
   './js/side-nav.js',
@@ -57,7 +69,11 @@ const CORE = [
   './js/stars.js',
   './js/counter.js',
   './js/player.js',
+  './js/mask.js',
   './js/call.js',
+  // модуль звонка: грузится динамическим import() из call.js, поэтому
+  // тега <script> у него нет — только эта строка прекэша
+  './js/vendor/trystero.mjs',
   './js/pwa.js',
 
   './icons/icon-192.png',

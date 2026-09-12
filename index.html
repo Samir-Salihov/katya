@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Для тебя</title>
+<title>Katera</title>
 <meta name="description" content="Маленький сайт с любовью — только для тебя ♥">
 
 <!-- PWA -->
@@ -19,7 +19,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Для тебя">
+<meta name="apple-mobile-web-app-title" content="Katera">
 
 <link rel="stylesheet" href="css/main.css">
 </head>
@@ -29,7 +29,7 @@
 <div class="splash" id="splash">
   <div class="splash-inner">
     <div class="splash-heart">♥</div>
-    <div class="splash-title">Для тебя</div>
+    <div class="splash-title">Katera</div>
     <div class="splash-sub">с любовью, Самир</div>
   </div>
   <div class="splash-dots"><span></span><span></span><span></span></div>
@@ -37,6 +37,9 @@
 
 <!-- ═══ ENVELOPE INTRO + PASSWORD ═══ -->
 <div class="envelope-overlay" id="envOverlay">
+  <!-- коридор воспоминаний: наполняется из js/stream.js после открытия конверта -->
+  <div class="ks-host" id="streamHost"><div class="ks-veil"></div></div>
+
   <div class="env-stage">
     <div class="envelope" id="envelope">
       <div class="env-body">
@@ -45,11 +48,30 @@
         <div class="env-address"><div></div><div></div><div></div></div>
       </div>
       <div class="env-letter">
-        <div class="env-letter-text">Для тебя ♥</div>
-        <div class="env-letter-sub">с любовью, Самир</div>
+        <!-- лист, сложенный втрое: боковые панели отогнуты назад, разгибаются при открытии -->
+        <div class="env-sheet">
+          <div class="env-sheet-panel env-sheet-top"></div>
+          <div class="env-sheet-panel env-sheet-mid">
+            <div class="env-letter-text">Katera ♥</div>
+            <div class="env-letter-sub">с любовью, Самир</div>
+          </div>
+          <div class="env-sheet-panel env-sheet-bot"></div>
+        </div>
       </div>
-      <div class="env-flap"><div class="env-flap-inner"></div></div>
-      <div class="env-seal"><span>♥</span></div>
+      <!-- клапан: лицевая сторона и изнанка (видна, когда отогнётся) -->
+      <div class="env-flap">
+        <div class="env-flap-inner"></div>
+        <div class="env-flap-back"></div>
+      </div>
+      <!-- сургучная печать: две половинки по линии скола + осколки -->
+      <div class="env-seal">
+        <div class="env-seal-half env-seal-l"><span>♥</span></div>
+        <div class="env-seal-half env-seal-r"><span>♥</span></div>
+        <i class="env-shard env-shard-1"></i>
+        <i class="env-shard env-shard-2"></i>
+        <i class="env-shard env-shard-3"></i>
+        <i class="env-shard env-shard-4"></i>
+      </div>
       <div class="env-grip"></div>
     </div>
     <div class="env-hint" id="envHint">
@@ -61,6 +83,7 @@
   </div>
 
   <div class="pwd-area" id="pwdArea">
+    <div class="pwd-mark">Katera</div>
     <div class="pwd-label">Введи пароль</div>
     <div class="pwd-hint">подсказка: мой день рождения</div>
     <div class="pwd-inputs" id="pwdInputs">
@@ -365,12 +388,26 @@
     <div class="call-heading">Видео- и аудиозвонок</div>
     <div class="call-text">Нажми — попадёшь в нашу приватную комнату. Как только второй зайдёт, вы увидите и услышите друг друга ♥</div>
     <button class="call-btn" id="callBtn" type="button">Позвонить сейчас</button>
-    <div class="call-note">Нужен интернет · комната только для нас двоих</div>
+    <!-- огонёк присутствия: зажигается, когда второй открыл сайт -->
+    <div class="call-live" id="callLive" hidden>
+      <span class="call-live-dot"></span><span id="callLiveText"></span>
+    </div>
+    <div class="call-note" id="callTotal">Нужен интернет · комната только для нас двоих</div>
+  </div>
+
+  <!-- история разговоров: наполняется из js/call.js -->
+  <div class="call-log rv" id="callLog" hidden>
+    <div class="call-log-title">Наши разговоры</div>
+    <!-- самый длинный разговор, дни подряд: наполняется из js/call.js -->
+    <div class="call-stats" id="callStats" hidden></div>
+    <ul class="call-log-list" id="callLogList"></ul>
   </div>
 </section>
 
 <!-- ═══ COUNTER ═══ -->
 <section class="counter" id="counter-sec">
+  <!-- звёздное небо: наполняется из js/stars.js -->
+  <div class="stars-canvas" id="starsCanvas"></div>
   <div class="c-top">С момента нашей встречи</div>
   <div class="c-big" id="cD">---</div>
   <div class="c-lbl">дней вместе</div>
@@ -409,26 +446,124 @@
 
 <!-- ═══ CALL OVERLAY (полноэкранный звонок) ═══ -->
 <div class="call-overlay" id="callOverlay" aria-hidden="true">
-  <div class="call-bar">
-    <div class="call-bar-title">Наш звонок ♥</div>
-    <button class="call-bar-close" id="callClose" type="button" aria-label="Завершить">&times;</button>
-  </div>
-  <div class="call-stage">
-    <div class="who-prompt" id="whoPrompt">
-      <div class="who-title">Кто звонит?</div>
-      <div class="who-sub">выбери один раз — запомню</div>
-      <div class="who-btns">
-        <button class="who-b" data-who="Самир" type="button">Самир</button>
-        <button class="who-b" data-who="Катя" type="button">Катя</button>
-      </div>
+
+  <!-- видео собеседника на весь экран; своё — плиткой в углу -->
+  <div class="cv-stage" id="cvStage">
+    <video class="cv-remote" id="cvRemote" playsinline autoplay></video>
+    <!-- звук отдельно: на iOS скрытое видео может не проигрывать аудио -->
+    <audio id="cvRemoteAudio" autoplay playsinline></audio>
+    <!-- сердечки от тапов по кадру: рисуются поверх видео, кликов не ловят -->
+    <div class="cv-hearts" id="cvHearts"></div>
+    <!-- стикеры: летящие тают сами, липкие ждут, пока их смахнут -->
+    <div class="cv-stick-layer" id="cvStickLayer"></div>
+    <div class="cv-self" id="cvSelf">
+      <video id="cvSelfVideo" playsinline autoplay muted></video>
+      <div class="cv-self-off" id="cvSelfOff">камера выключена</div>
     </div>
-    <div class="call-loading" id="callLoading">Загружаем звонок…</div>
-    <div class="jitsi-mount" id="jitsi"></div>
   </div>
+
+  <!-- аудиорежим: вместо видео — пульсирующий круг -->
+  <div class="cv-voice" id="cvVoice" aria-hidden="true">
+    <div class="cv-voice-ring" id="cvVoiceRing">
+      <div class="cv-voice-face">♥</div>
+    </div>
+    <div class="cv-voice-name" id="cvVoiceName">Катя</div>
+    <div class="cv-voice-note">только голос</div>
+  </div>
+
+  <!-- состояние: звоним / ждём / соединяемся -->
+  <div class="cv-state" id="cvState">
+    <div class="cv-avatar"><div class="cv-avatar-inner">♥</div></div>
+    <div class="cv-state-title" id="cvStateTitle">Звоним…</div>
+    <div class="cv-state-sub" id="cvStateSub">ждём, пока возьмут трубку</div>
+    <button class="cv-invite" id="cvInvite" type="button" hidden>Позвать ещё раз</button>
+    <!-- входящий звонок: взять трубку или отказаться -->
+    <div class="cv-answer" id="cvAnswer" hidden>
+      <button class="cv-pick" id="cvPick" type="button">Ответить</button>
+      <button class="cv-deny" id="cvDeny" type="button">Потом</button>
+    </div>
+  </div>
+
+  <!-- кто звонит — спрашиваем один раз -->
+  <div class="who-prompt" id="whoPrompt">
+    <div class="who-title">Кто звонит?</div>
+    <div class="who-sub">выбери один раз — запомню</div>
+    <div class="who-btns">
+      <button class="who-b" data-who="Самир" type="button">Самир</button>
+      <button class="who-b" data-who="Катя" type="button">Катя</button>
+    </div>
+  </div>
+
+  <!-- связь пропала: ждём возвращения, трубку не кладём -->
+  <div class="cv-lost" id="cvLost" hidden>Связь пропала — ждём, пока вернётся…</div>
+
+  <!-- связь слабая: предлагаем голос, там где видео уже не проходит -->
+  <button class="cv-quality" id="cvQuality" type="button" hidden></button>
+
+  <!-- верхняя строка: имя и время разговора -->
+  <div class="cv-top" id="cvTop">
+    <div class="cv-peer" id="cvPeer">Наш звонок ♥</div>
+    <div class="cv-timer" id="cvTimer">00:00</div>
+  </div>
+
+  <!-- ночной режим: звёзды вместо видео, голос остаётся -->
+  <div class="cv-sky" id="cvSky" aria-hidden="true"></div>
+
+  <!-- второстепенные действия: сбоку, чтобы нижний ряд остался чистым -->
+  <div class="cv-side" id="cvSide">
+    <button class="cv-mini" id="cvFlip" type="button" aria-label="Перевернуть камеру" hidden>
+      <svg viewBox="0 0 24 24"><path d="M4 8h11a4 4 0 014 4M20 16H9a4 4 0 01-4-4"/><path d="M2 8l2.5-2.5M2 8l2.5 2.5M22 16l-2.5-2.5M22 16l-2.5 2.5"/></svg>
+    </button>
+    <button class="cv-mini" id="cvFxBtn" type="button" aria-label="Маски и фильтры">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 3 3 0 002-5.2 3 3 0 012-5.2h1.5A3.5 3.5 0 0021 7c0-2.2-3.6-4-9-4z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="11" cy="7.5" r="1.2"/><circle cx="15.5" cy="8.5" r="1.2"/></svg>
+    </button>
+    <button class="cv-mini" id="cvStickBtn" type="button" aria-label="Стикеры">
+      <svg viewBox="0 0 24 24"><path d="M13 3H6a3 3 0 00-3 3v12a3 3 0 003 3h6l9-9V6a3 3 0 00-3-3z"/><path d="M12 21v-6a3 3 0 013-3h6"/></svg>
+    </button>
+    <button class="cv-mini" id="cvMusic" type="button" aria-label="Музыкальный звук" data-on="0">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+    </button>
+    <button class="cv-mini" id="cvSleep" type="button" aria-label="Засыпаем вместе">
+      <svg viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 019.5 3.5a8.5 8.5 0 1011 11z"/></svg>
+    </button>
+    <button class="cv-mini" id="cvShot" type="button" aria-label="Кадр на память">
+      <svg viewBox="0 0 24 24"><path d="M3 8h3.5L8 5.5h8L17.5 8H21v11H3z"/><circle cx="12" cy="13" r="3.4"/></svg>
+    </button>
+  </div>
+
+  <!-- короткие уведомления -->
+  <div class="cv-toast" id="cvToast" hidden></div>
+
+  <!-- маски, фоны, фильтры: наполняется из js/call.js по каталогу mask.js -->
+  <div class="cv-fx" id="cvFx" hidden></div>
+
+  <!-- стикеры -->
+  <div class="cv-fx cv-sticks" id="cvSticks" hidden></div>
+
+  <!-- свои кнопки управления -->
+  <div class="cv-controls" id="cvControls">
+    <button class="cv-b" id="cvMic" type="button" aria-label="Микрофон" data-on="1">
+      <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 003-3V6a3 3 0 00-6 0v6a3 3 0 003 3z"/><path d="M18 11a6 6 0 01-12 0M12 17v4"/></svg>
+    </button>
+    <button class="cv-b" id="cvCam" type="button" aria-label="Камера" data-on="1">
+      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 11l6-3v8l-6-3z"/></svg>
+    </button>
+    <button class="cv-b cv-hang" id="cvHang" type="button" aria-label="Завершить">
+      <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg>
+    </button>
+    <button class="cv-b" id="cvVoiceBtn" type="button" aria-label="Только голос">
+      <svg viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg>
+    </button>
+    <button class="cv-b" id="cvPip" type="button" aria-label="В уголок">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="5" rx="1"/></svg>
+    </button>
+  </div>
+
 </div>
 
 <!-- ═══ SCRIPTS ═══ -->
 <script src="js/haptics.js"></script>
+<script src="js/stream.js"></script>
 <script src="js/intro.js"></script>
 <script src="js/side-nav.js"></script>
 <script src="js/reveal.js"></script>
@@ -441,6 +576,7 @@
 <script src="js/stars.js"></script>
 <script src="js/counter.js"></script>
 <script src="js/player.js"></script>
+<script src="js/mask.js"></script>
 <script src="js/call.js"></script>
 <script src="js/pwa.js"></script>
 <script src="js/install-hint.js"></script>

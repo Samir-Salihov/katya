@@ -1,55 +1,332 @@
-/* ═══ CALL — секция «Позвонить» ═══ */
-.call-sec{background:var(--cream);text-align:center;padding:100px 24px}
-.call-card{max-width:460px;margin:0 auto;padding:48px 32px;background:var(--white);border-radius:20px;box-shadow:0 12px 40px var(--shadow);border:1px solid rgba(242,215,213,0.5)}
+/* ═══ CALL — секция «Позвонить» ═══
+   Фон секции задаёт base/flow.css (ночная часть страницы). */
+.call-sec{text-align:center;padding:100px 24px}
+.call-card{max-width:460px;margin:0 auto;padding:48px 32px;border-radius:22px}
 
 .call-ring{width:96px;height:96px;margin:0 auto 24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(145deg,var(--rose),var(--deep));position:relative;box-shadow:0 10px 30px rgba(155,107,107,0.35)}
+  background:linear-gradient(145deg,var(--rose),var(--coral));position:relative}
 .call-ring svg{width:40px;height:40px;fill:var(--white)}
 .call-ring::before,.call-ring::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--rose);opacity:0;animation:callPulse 2.4s ease-out infinite}
 .call-ring::after{animation-delay:1.2s}
 @keyframes callPulse{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.6);opacity:0}}
 
-.call-heading{font-size:1.15rem;font-style:italic;color:var(--wine);margin-bottom:10px}
-.call-text{font-size:0.9rem;color:var(--deep);line-height:1.8;margin-bottom:28px}
+.call-heading{font-size:1.15rem;font-style:italic;margin-bottom:10px}
+.call-text{font-size:0.9rem;line-height:1.8;margin-bottom:28px}
 .call-btn{padding:15px 40px;border:none;border-radius:40px;cursor:pointer;
-  font-family:Georgia,serif;font-size:1rem;font-style:italic;color:var(--white);
-  background:linear-gradient(135deg,var(--rose),var(--deep));
+  font-family:var(--font-text);font-size:0.95rem;font-weight:500;color:var(--white);
+  background:linear-gradient(135deg,var(--rose),var(--coral));
   transition:transform 0.2s ease,box-shadow 0.3s ease}
-.call-btn:hover{transform:scale(1.05);box-shadow:0 10px 28px rgba(155,107,107,0.35)}
+.call-btn:hover{transform:scale(1.05)}
 .call-btn:active{transform:scale(0.97)}
-.call-note{margin-top:18px;font-size:0.68rem;color:var(--rose);letter-spacing:1px;opacity:0.7}
+.call-note{margin-top:18px;font-size:0.68rem;letter-spacing:1px}
 
-/* ═══ CALL OVERLAY — полноэкранный звонок ═══ */
-.call-overlay{position:fixed;inset:0;z-index:1200;background:#0D0708;display:flex;flex-direction:column;
-  opacity:0;pointer-events:none;transition:opacity 0.4s ease}
+/* ═══ ЭКРАН ЗВОНКА ═══
+   Слои снизу вверх: видео → аудиорежим → состояние → верх/кнопки.
+   Всё своё: ни одного чужого элемента управления. */
+.call-overlay{position:fixed;inset:0;z-index:1200;background:#120A20;
+  opacity:0;pointer-events:none;transition:opacity 0.45s ease}
 .call-overlay.on{opacity:1;pointer-events:auto}
 
-.call-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:calc(14px + env(safe-area-inset-top)) 20px 14px;
-  background:linear-gradient(180deg,rgba(44,24,16,0.9),rgba(44,24,16,0))}
-.call-bar-title{font-family:Georgia,serif;font-style:italic;font-size:1rem;color:var(--white)}
-.call-bar-close{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,252,247,0.2);
-  background:rgba(255,252,247,0.08);color:var(--blush);font-family:Georgia,serif;font-size:1.5rem;line-height:1;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s ease}
-.call-bar-close:hover{background:rgba(255,252,247,0.16)}
+/* ── видео ── */
+.cv-stage{position:absolute;inset:0;background:#120A20}
+.cv-remote{width:100%;height:100%;object-fit:cover;display:block;background:#120A20}
+/* пока собеседник не подключился, показывать нечего */
+.call-overlay:not(.talking) .cv-stage{opacity:0}
 
-.call-stage{flex:1;position:relative;overflow:hidden}
-.jitsi-mount{position:absolute;inset:0}
-.jitsi-mount iframe{width:100%;height:100%;border:0}
+/* своё видео — плиткой в углу, над safe-area */
+.cv-self{position:absolute;right:16px;width:104px;height:148px;border-radius:16px;overflow:hidden;
+  top:calc(74px + env(safe-area-inset-top));
+  border:1px solid rgba(255,196,150,0.25);box-shadow:0 10px 30px rgba(8,4,16,0.6);
+  background:#241432;z-index:3;transition:opacity 0.4s ease}
+.cv-self video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cv-self-off{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
+  padding:8px;font-size:0.6rem;color:var(--blush);opacity:0.7}
+.cv-self.cam-off video{visibility:hidden}
+.cv-self.cam-off .cv-self-off{display:flex}
+.call-overlay.voice .cv-self{opacity:0;pointer-events:none}
 
-.call-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
-  padding:0 32px;color:var(--blush);font-style:italic;font-size:0.95rem;line-height:1.7;
-  background:linear-gradient(170deg,#2A1515,#4A2828)}
+/* ── аудиорежим ── */
+.cv-voice{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.call-overlay.voice .cv-voice{display:flex}
+.cv-voice-ring{width:180px;height:180px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%,var(--coral),var(--rose) 55%,#8E2F4E 100%);
+  box-shadow:0 0 0 0 var(--glow);transition:box-shadow 0.12s ease,transform 0.12s ease}
+.cv-voice-face{font-size:3rem;color:rgba(255,240,225,0.9)}
+.cv-voice-name{font-family:var(--font-display);font-style:italic;font-size:1.6rem;color:var(--blush)}
+.cv-voice-note{font-size:0.62rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);opacity:0.7}
 
-/* выбор «кто звонит» */
-.who-prompt{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  padding:0 32px;text-align:center;background:linear-gradient(170deg,#2A1515,#4A2828)}
+/* ── состояние: звоним / ждём ── */
+.cv-state{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:0 32px;text-align:center;background:radial-gradient(ellipse at 50% 40%,#3A1F42 0%,#180F2E 70%);
+  transition:opacity 0.5s ease}
+.call-overlay.talking .cv-state,.call-overlay.asking .cv-state{opacity:0;pointer-events:none}
+.cv-avatar{width:132px;height:132px;border-radius:50%;position:relative;margin-bottom:14px;
+  background:linear-gradient(145deg,var(--rose),#8E2F4E);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 20px 50px rgba(8,4,16,0.6)}
+.cv-avatar-inner{font-size:3rem;color:rgba(255,240,225,0.92)}
+.cv-avatar::before,.cv-avatar::after{content:'';position:absolute;inset:0;border-radius:50%;
+  border:2px solid var(--rose);opacity:0;animation:callPulse 2.4s ease-out infinite}
+.cv-avatar::after{animation-delay:1.2s}
+.cv-state-title{font-family:var(--font-display);font-style:italic;font-size:1.7rem;color:var(--white)}
+.cv-state-sub{font-size:0.72rem;letter-spacing:2px;color:var(--blush);opacity:0.7;max-width:280px;line-height:1.7}
+.cv-invite{margin-top:18px;padding:12px 28px;border-radius:40px;cursor:pointer;
+  font-family:var(--font-text);font-size:0.82rem;color:var(--white);
+  background:rgba(255,196,150,0.12);border:1px solid rgba(255,196,150,0.3);
+  transition:background 0.3s ease}
+.cv-invite:hover{background:rgba(255,196,150,0.22)}
+
+/* ── верхняя строка ── */
+.cv-top{position:absolute;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(16px + env(safe-area-inset-top)) 22px 0;pointer-events:none;
+  opacity:0;transition:opacity 0.4s ease}
+.call-overlay.talking .cv-top{opacity:1}
+.cv-peer{font-family:var(--font-display);font-style:italic;font-size:1.05rem;color:var(--white);
+  text-shadow:0 2px 12px rgba(0,0,0,0.5)}
+.cv-timer{font-size:0.8rem;letter-spacing:1px;color:var(--blush);
+  background:rgba(18,10,32,0.5);padding:5px 12px;border-radius:20px;backdrop-filter:blur(8px)}
+
+/* ── кнопки ── */
+.cv-controls{position:absolute;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:center;gap:14px;
+  bottom:calc(30px + env(safe-area-inset-bottom));
+  opacity:0;transform:translateY(14px);transition:opacity 0.4s ease,transform 0.4s ease}
+.call-overlay.talking .cv-controls,.call-overlay.calling .cv-controls{opacity:1;transform:translateY(0)}
+.cv-b{width:56px;height:56px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,235,215,0.18);background:rgba(255,240,225,0.10);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:background 0.25s ease,transform 0.18s ease,opacity 0.25s ease}
+.cv-b svg{width:24px;height:24px;fill:none;stroke:var(--white);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cv-b:hover{background:rgba(255,240,225,0.2)}
+.cv-b:active{transform:scale(0.93)}
+/* выключено — приглушаем и перечёркиваем */
+.cv-b[data-on="0"]{background:rgba(255,240,225,0.05);position:relative}
+.cv-b[data-on="0"] svg{opacity:0.45}
+.cv-b[data-on="0"]::after{content:'';position:absolute;width:34px;height:1.5px;background:var(--rose);
+  transform:rotate(-45deg);border-radius:2px}
+.cv-hang{width:66px;height:66px;background:linear-gradient(135deg,#FF5B5B,#C8304A);border-color:transparent;
+  box-shadow:0 10px 30px rgba(255,91,91,0.4)}
+.cv-hang svg{fill:var(--white);stroke:none;width:28px;height:28px;transform:rotate(133deg)}
+.cv-hang:hover{background:linear-gradient(135deg,#FF7070,#D93A54)}
+
+/* ── выбор «кто звонит» ── */
+.who-prompt{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:0 32px;text-align:center;background:radial-gradient(ellipse at 50% 40%,#3A1F42 0%,#180F2E 70%)}
 .who-prompt.show{display:flex}
-.who-title{font-family:Georgia,serif;font-style:italic;font-size:1.4rem;color:var(--white)}
-.who-sub{font-size:0.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--blush);opacity:0.7;margin-bottom:20px}
+.who-title{font-family:var(--font-display);font-style:italic;font-size:1.5rem;color:var(--white)}
+.who-sub{font-size:0.66rem;letter-spacing:3px;text-transform:uppercase;color:var(--blush);opacity:0.7;margin-bottom:22px}
 .who-btns{display:flex;gap:14px}
-.who-b{padding:14px 34px;border:1px solid rgba(212,165,165,0.3);border-radius:40px;cursor:pointer;
-  font-family:Georgia,serif;font-size:1.05rem;font-style:italic;color:var(--white);
-  background:rgba(212,165,165,0.08);transition:transform 0.2s ease,background 0.3s ease,border-color 0.3s ease}
-.who-b:hover{transform:scale(1.05);background:rgba(212,165,165,0.16);border-color:var(--rose)}
+.who-b{padding:14px 34px;border:1px solid rgba(255,196,150,0.3);border-radius:40px;cursor:pointer;
+  font-family:var(--font-text);font-size:0.95rem;color:var(--white);
+  background:rgba(255,196,150,0.1);transition:transform 0.2s ease,background 0.3s ease}
+.who-b:hover{transform:scale(1.05);background:rgba(255,196,150,0.2)}
 .who-b:active{transform:scale(0.97)}
+
+@media(max-width:560px){
+  .cv-b{width:52px;height:52px}
+  .cv-hang{width:62px;height:62px}
+  .cv-controls{gap:10px}
+  .cv-self{width:88px;height:126px}
+}
+
+/* ═══ ИСТОРИЯ РАЗГОВОРОВ ═══
+   Показывается только когда есть что показывать — пустой список
+   в подарке выглядит как недоделка. */
+.call-log{max-width:460px;margin:28px auto 0;text-align:left}
+.call-log-title{font-size:0.62rem;letter-spacing:4px;text-transform:uppercase;
+  color:var(--gold);opacity:0.7;text-align:center;margin-bottom:16px}
+.call-log-list{list-style:none;display:flex;flex-direction:column;gap:2px}
+.call-log-list li{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+  padding:12px 16px;border-radius:12px;
+  background:rgba(255,240,225,0.05);border:1px solid rgba(255,196,150,0.10)}
+.call-log-when{font-size:0.82rem;color:var(--blush);opacity:0.85}
+.call-log-len{font-size:0.78rem;color:var(--gold);white-space:nowrap}
+.call-log-more{margin-top:12px;text-align:center;font-size:0.68rem;color:var(--blush);opacity:0.5}
+
+/* ═══ ПРИСУТСТВИЕ, ВХОДЯЩИЙ ЗВОНОК, ПОТЕРЯ СВЯЗИ ═══ */
+
+/* ── огонёк «второй сейчас на сайте» ── */
+.call-live{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:16px;
+  font-size:0.78rem;color:var(--blush);opacity:0.92}
+.call-live-dot{width:7px;height:7px;border-radius:50%;background:#6BE39A;flex:none;
+  box-shadow:0 0 0 0 rgba(107,227,154,0.55);animation:livePulse 2.2s ease-out infinite}
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(107,227,154,0.55)}
+  70%{box-shadow:0 0 0 9px rgba(107,227,154,0)}
+  100%{box-shadow:0 0 0 0 rgba(107,227,154,0)}
+}
+
+/* ── входящий: две кнопки вместо одной ── */
+.cv-answer{display:flex;gap:14px;margin-top:22px}
+.cv-pick,.cv-deny{padding:14px 32px;border-radius:40px;cursor:pointer;
+  font-family:var(--font-text);font-size:0.92rem;color:var(--white);
+  border:1px solid transparent;transition:transform 0.2s ease,background 0.3s ease}
+.cv-pick{background:linear-gradient(135deg,#4FD98A,#1F9E63);box-shadow:0 10px 30px rgba(79,217,138,0.35)}
+.cv-pick:hover{transform:scale(1.05)}
+.cv-deny{background:rgba(255,240,225,0.08);border-color:rgba(255,196,150,0.28)}
+.cv-deny:hover{background:rgba(255,240,225,0.16)}
+.cv-pick:active,.cv-deny:active{transform:scale(0.97)}
+
+/* Пока звонят — сердце в аватаре бьётся чаще, чем при исходящем. */
+.call-overlay.incoming .cv-avatar::before,
+.call-overlay.incoming .cv-avatar::after{animation-duration:1.4s}
+.call-overlay.incoming .cv-avatar::after{animation-delay:0.7s}
+
+/* ── связь пропала: разговор ещё не окончен, ждём ── */
+.cv-lost{position:absolute;left:50%;top:calc(64px + env(safe-area-inset-top));z-index:6;
+  transform:translateX(-50%);padding:9px 18px;border-radius:30px;white-space:nowrap;
+  font-size:0.74rem;letter-spacing:1px;color:var(--white);
+  background:rgba(200,48,74,0.75);border:1px solid rgba(255,196,150,0.25);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+/* Картинка замерла — пусть будет видно, что она уже неживая. */
+.call-overlay.lost .cv-remote{filter:grayscale(0.6) brightness(0.7);transition:filter 0.6s ease}
+
+@media(max-width:560px){
+  .cv-answer{gap:10px}
+  .cv-pick,.cv-deny{padding:13px 26px;font-size:0.86rem}
+}
+
+/* ── связь слабая: подсказка-кнопка, уводящая в аудиорежим ── */
+.cv-quality{position:absolute;left:50%;bottom:calc(122px + env(safe-area-inset-bottom));z-index:6;
+  transform:translateX(-50%);padding:9px 18px;border-radius:30px;white-space:nowrap;cursor:pointer;
+  font-family:var(--font-text);font-size:0.72rem;letter-spacing:0.5px;color:var(--night);
+  background:rgba(255,196,150,0.92);border:none;
+  box-shadow:0 8px 24px rgba(8,4,16,0.45)}
+.cv-quality:active{transform:translateX(-50%) scale(0.97)}
+/* Подсказка нужна только в разговоре — в остальных состояниях её не видно. */
+.call-overlay:not(.talking) .cv-quality{display:none}
+
+@media(max-width:560px){
+  .cv-quality{bottom:calc(112px + env(safe-area-inset-bottom));font-size:0.68rem;padding:8px 14px}
+}
+
+/* ═══ СЕРДЕЧКИ, ЗАПИСКИ, КАДР НА ПАМЯТЬ ═══ */
+
+/* ── сердечки от тапов: слой поверх видео, кликов не перехватывает ── */
+.cv-hearts{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.cv-heart{position:absolute;transform:translate(-50%,-50%);color:var(--rose);
+  text-shadow:0 2px 12px rgba(8,4,16,0.5);animation:cvHeartUp 1.7s ease-out forwards;will-change:transform,opacity}
+.cv-heart.mine{color:var(--blush)}
+@keyframes cvHeartUp{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% - 130px)) scale(0.9)}
+}
+
+/* ── боковой столбик второстепенных кнопок ── */
+.cv-side{position:absolute;right:14px;top:calc(84px + env(safe-area-inset-top));z-index:5;
+  display:none;flex-direction:column;gap:10px}
+.call-overlay.talking .cv-side{display:flex}
+.cv-mini{width:42px;height:42px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(24,15,46,0.5);border:1px solid rgba(255,196,150,0.22);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:background 0.3s ease,transform 0.2s ease}
+.cv-mini svg{width:19px;height:19px;fill:none;stroke:var(--blush);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.cv-mini:hover{background:rgba(255,240,225,0.16)}
+.cv-mini:active{transform:scale(0.92)}
+
+/* ── короткие уведомления ── */
+.cv-toast{position:absolute;left:50%;top:calc(110px + env(safe-area-inset-top));z-index:7;
+  transform:translateX(-50%);padding:9px 18px;border-radius:30px;white-space:nowrap;
+  font-size:0.74rem;letter-spacing:0.5px;color:var(--night);background:rgba(255,240,225,0.92)}
+
+@media(max-width:560px){
+  .cv-side{right:10px;top:calc(76px + env(safe-area-inset-top));gap:8px}
+  .cv-mini{width:38px;height:38px}
+  .cv-mini svg{width:17px;height:17px}
+}
+
+/* ═══ «ЗАСЫПАЕМ ВМЕСТЕ» ═══
+   Видео уходит, голос остаётся, экран темнеет до звёзд. */
+.cv-sky{position:absolute;inset:0;z-index:2;opacity:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 120%,#221540 0%,#0B0718 75%);
+  transition:opacity 1.2s ease}
+.call-overlay.sleep .cv-sky{opacity:1}
+.cv-star{position:absolute;border-radius:50%;background:var(--blush);
+  animation:cvTwinkle 3s ease-in-out infinite}
+@keyframes cvTwinkle{0%,100%{opacity:0.15;transform:scale(0.8)}50%{opacity:0.9;transform:scale(1)}}
+
+/* В ночном режиме не нужно ни видео, ни пульсирующего круга аудиорежима. */
+.call-overlay.sleep .cv-stage,
+.call-overlay.sleep .cv-voice{opacity:0;pointer-events:none;transition:opacity 1.2s ease}
+.call-overlay.sleep .cv-top,
+.call-overlay.sleep .cv-controls,
+.call-overlay.sleep .cv-side{transition:opacity 1.4s ease}
+/* Через несколько секунд без касаний гаснет и остальное. */
+.call-overlay.sleep.dim .cv-top,
+.call-overlay.sleep.dim .cv-controls,
+.call-overlay.sleep.dim .cv-side{opacity:0.09}
+.call-overlay.sleep.dim .cv-hang{box-shadow:none}
+
+/* ── статистика разговоров ── */
+.call-stats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.call-chip{padding:7px 14px;border-radius:30px;font-size:0.7rem;letter-spacing:0.5px;
+  color:var(--gold);background:rgba(255,196,150,0.10);border:1px solid rgba(255,196,150,0.18)}
+
+/* Кнопка в столбике, когда её режим включён. */
+.cv-mini.lit{background:rgba(255,196,150,0.28);border-color:rgba(255,196,150,0.5)}
+.cv-mini.lit svg{stroke:var(--white)}
+.cv-mini:disabled{opacity:0.5;cursor:default}
+
+/* ═══ МАСКИ, ФИЛЬТРЫ, СТИКЕРЫ ═══ */
+
+/* ── выдвижная панель: одна на эффекты, одна на стикеры ── */
+.cv-fx{position:absolute;left:50%;bottom:calc(112px + env(safe-area-inset-bottom));z-index:7;
+  transform:translateX(-50%);width:min(560px,calc(100vw - 28px));max-height:44vh;overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;padding:16px 18px;border-radius:22px;
+  background:rgba(24,15,46,0.86);border:1px solid rgba(255,196,150,0.22);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 18px 50px rgba(8,4,16,0.5);
+  animation:cvFxIn 0.28s ease-out}
+@keyframes cvFxIn{from{opacity:0;transform:translate(-50%,14px)}to{opacity:1;transform:translate(-50%,0)}}
+
+.cv-fx-row{display:flex;flex-direction:column;gap:8px}
+.cv-fx-title{font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:0.75}
+.cv-fx-items{display:flex;flex-wrap:wrap;gap:8px}
+.cv-fx-b{padding:9px 15px;border-radius:30px;cursor:pointer;white-space:nowrap;
+  font-family:var(--font-text);font-size:0.78rem;color:var(--white);
+  background:rgba(255,240,225,0.07);border:1px solid rgba(255,196,150,0.18);
+  transition:background 0.25s ease,transform 0.2s ease}
+.cv-fx-b:hover{background:rgba(255,240,225,0.15)}
+.cv-fx-b:active{transform:scale(0.96)}
+.cv-fx-b.on{background:rgba(255,196,150,0.85);border-color:transparent;color:var(--night)}
+.cv-fx-b:disabled{opacity:0.45;cursor:default}
+
+/* ── стикеры в панели ── */
+.cv-st-items{display:flex;flex-wrap:wrap;gap:6px}
+.cv-st-b{width:46px;height:46px;border-radius:14px;cursor:pointer;font-size:1.5rem;line-height:1;
+  background:rgba(255,240,225,0.07);border:1px solid rgba(255,196,150,0.16);
+  transition:transform 0.18s ease,background 0.25s ease}
+.cv-st-b:hover{background:rgba(255,240,225,0.16);transform:translateY(-2px)}
+.cv-st-b:active{transform:scale(0.92)}
+
+/* ── стикеры на кадре ── */
+.cv-stick-layer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.cv-fly{position:absolute;font-size:2.6rem;line-height:1;transform:translate(-50%,-50%);
+  text-shadow:0 4px 18px rgba(8,4,16,0.5);animation:cvFly 2.3s ease-out forwards;will-change:transform,opacity}
+@keyframes cvFly{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-12deg)}
+  16%{opacity:1;transform:translate(-50%,-50%) scale(1.18) rotate(6deg)}
+  32%{transform:translate(-50%,-50%) scale(1) rotate(0deg)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% - 150px)) scale(0.85)}
+}
+/* Липкий ждёт, пока его смахнут, — поэтому он единственный ловит касания. */
+.cv-stick{position:absolute;font-size:3rem;line-height:1;cursor:grab;pointer-events:auto;touch-action:none;
+  transform:translate(-50%,-50%) rotate(var(--tilt,0deg));
+  text-shadow:0 6px 22px rgba(8,4,16,0.55);animation:cvStickIn 0.4s cubic-bezier(.2,1.5,.4,1)}
+.cv-stick:active{cursor:grabbing}
+.cv-stick.gone{opacity:0;transition:opacity 0.26s ease,transform 0.26s ease;
+  transform:translate(-50%,-50%) scale(0.6) rotate(var(--tilt,0deg))}
+@keyframes cvStickIn{from{opacity:0;transform:translate(-50%,-50%) scale(0.2) rotate(var(--tilt,0deg))}
+  to{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(var(--tilt,0deg))}}
+
+/* Панели — только в разговоре. */
+.call-overlay:not(.talking) .cv-fx{display:none}
+
+@media(max-width:560px){
+  .cv-fx{max-height:50vh;padding:14px;gap:12px}
+  .cv-fx-b{font-size:0.74rem;padding:8px 13px}
+  .cv-st-b{width:42px;height:42px;font-size:1.35rem}
+  .cv-fly{font-size:2.2rem}
+  .cv-stick{font-size:2.6rem}
+}

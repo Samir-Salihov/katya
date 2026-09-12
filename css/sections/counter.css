@@ -1,9 +1,11 @@
 /* ═══ COUNTER ═══ */
-.counter{background:linear-gradient(135deg,var(--wine) 0%,#3D2222 100%);text-align:center;padding:80px 24px;position:relative;overflow:hidden}
-.counter::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(201,169,110,0.08) 0%,transparent 50%),radial-gradient(circle at 75% 65%,rgba(212,165,165,0.06) 0%,transparent 50%);pointer-events:none}
-.c-top{font-size:0.65rem;letter-spacing:6px;text-transform:uppercase;color:var(--rose);margin-bottom:20px;position:relative}
-.c-big{font-size:clamp(3rem,10vw,6rem);font-weight:300;color:var(--white);font-style:italic;position:relative;text-shadow:0 4px 20px rgba(0,0,0,0.2)}
-.c-lbl{font-size:0.95rem;color:var(--blush);letter-spacing:3px;font-style:italic;position:relative}
-.c-row{display:flex;justify-content:center;gap:48px;margin-top:36px;flex-wrap:wrap;position:relative}
+.counter{text-align:center;padding:96px 24px;position:relative;overflow:hidden}
+/* фон ночи — в base/flow.css */
+/* лунное свечение поверх звёзд */
+.counter::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 15%,rgba(255,194,74,0.10) 0%,transparent 55%),radial-gradient(circle at 78% 72%,rgba(255,107,107,0.08) 0%,transparent 45%)}
+.c-top{font-size:0.65rem;letter-spacing:6px;text-transform:uppercase;color:var(--rose);margin-bottom:20px;position:relative;z-index:2}
+.c-big{font-size:clamp(3rem,10vw,6rem);font-weight:400;color:var(--white);font-style:italic;position:relative;z-index:2;text-shadow:0 0 40px rgba(255,194,74,0.35),0 4px 20px rgba(0,0,0,0.35)}
+.c-lbl{font-size:0.95rem;color:var(--blush);letter-spacing:3px;font-style:italic;position:relative;z-index:2}
+.c-row{display:flex;justify-content:center;gap:48px;margin-top:36px;flex-wrap:wrap;position:relative;z-index:2}
 .c-item .cn{font-size:2rem;color:var(--gold);font-style:italic;font-weight:300}
 .c-item .cl{font-size:0.65rem;color:var(--blush);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
